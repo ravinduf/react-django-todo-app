@@ -52,14 +52,28 @@ class App extends React.Component{
   handleSubmit(e) {
     e.preventDefault();
     console.log(this.state.activeItem);
-    this.setState({
-      activeItem : {
-        title : ''
-      }
-    })
 
-    
+    const url = 'http://127.0.0.1:8000/api/task-create/';
+
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify(this.state.activeItem)
+    }).then((response) => {
+      this.fetchTasks();
+      this.setState({
+        activeItem : {
+          title : ''
+        }
+      })
+  
+    }).catch((error) => {
+      console.log('Error: ', error)
+    })
   }
+  
   render(){
     const tasks = this.state.todoList;
     return(
