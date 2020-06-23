@@ -2,6 +2,32 @@ import React from 'react';
 import './App.css';
 
 class App extends React.Component{
+  constructor(props) {
+    super(props);
+    
+    this.state = {
+      todoList:[],
+      activeItems:{
+        id: null,
+        title: '',
+        completed: false
+      },
+      editing: false,
+    }
+
+    this.fetchTasks = this.fetchTasks.bind(this);
+  };
+
+  componentDidMount(){
+    this.fetchTasks()
+  }
+
+  fetchTasks(){
+    console.log('Fetching ...')
+
+    fetch()
+  }
+
   render(){
     return(
       <div className="container">
