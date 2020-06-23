@@ -7,7 +7,7 @@ class App extends React.Component{
     
     this.state = {
       todoList:[],
-      activeItems:{
+      activeItem:{
         id: null,
         title: '',
         completed: false
@@ -16,6 +16,8 @@ class App extends React.Component{
     }
 
     this.fetchTasks = this.fetchTasks.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   };
 
   componentDidMount(){
@@ -31,24 +33,47 @@ class App extends React.Component{
       // console.log(data)
       this.setState({ todoList:data })
           );
-
-      
   }
 
+  handleChange(e) {
+    const name = e.target.name;
+    const value = e.target.value;
+    // console.log('Name', name);
+    // console.log('Value', value);
+
+    this.setState({
+      activeItem:{
+        title: value
+      }
+    })
+
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    console.log(this.state.activeItem);
+    this.setState({
+      activeItem : {
+        title : ''
+      }
+    })
+
+    
+  }
   render(){
     const tasks = this.state.todoList;
     return(
       <div className="container">
         <div id="task-container">
           <div id="form-wrapper">
-            <form id="form">
+            <form onSubmit={this.handleSubmit} id="form">
               <div className="flex-wrapper">
                 <div style={{flex: 6}}>
-                  <input className="form-control" id="title" type="text" name="title" placeholder="Add Task..."></input>
+                  <input onChange={this.handleChange} className="form-control" id="title" type="text" name="title" value={this.state.activeItem.title} placeholder="Add Task..."></input>
                 </div>
 
                 <div style={{flex: 1}}>
-                  <button id="submit" className="btn btn-warning" type="submit" name="Add" placeholder="Add">Add</button>
+                  <button onClick={this.handleSubmit} id="submit" className="btn btn-warning" type="submit" name="Add" placeholder="Add">Add</button>
                 </div>
               </div>
             </form>
