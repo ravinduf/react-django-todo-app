@@ -18,7 +18,24 @@ class App extends React.Component{
     this.fetchTasks = this.fetchTasks.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.getCookie = this.getCookie.bind(this);
   };
+
+  getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
   componentDidMount(){
     this.fetchTasks();
@@ -53,12 +70,15 @@ class App extends React.Component{
     e.preventDefault();
     console.log(this.state.activeItem);
 
+    const csrftoken = this.getCookie('csrftoken');
+
     const url = 'http://127.0.0.1:8000/api/task-create/';
 
     fetch(url, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
+        'X-CSRFToken': csrftoken,
       },
       body: JSON.stringify(this.state.activeItem)
     }).then((response) => {
@@ -73,7 +93,7 @@ class App extends React.Component{
       console.log('Error: ', error)
     })
   }
-  
+
   render(){
     const tasks = this.state.todoList;
     return(
