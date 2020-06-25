@@ -22,6 +22,7 @@ class App extends React.Component{
     this.getCookie = this.getCookie.bind(this);
     this.startEdit = this.startEdit.bind(this);
     this.deleteItem = this.deleteItem.bind(this);
+    this.strikeUnstrike = this.strikeUnstrike.bind(this);
   };
 
   getCookie(name) {
@@ -46,11 +47,10 @@ class App extends React.Component{
 
   fetchTasks(){
     console.log('Fetching ...')
-
     fetch("http://127.0.0.1:8000/api/task-list/")
     .then(response => response.json())
     .then(data => 
-      // console.log(data)
+      //console.log(data)
       this.setState({ todoList:data })
           );
   }
@@ -127,7 +127,27 @@ class App extends React.Component{
     }).then((res) => {
       this.fetchTasks();
     });
-}
+  }
+
+  strikeUnstrike(task) {
+    console.log(task.completed);
+    task.completed = !task.completed;
+    console.log(task.completed);
+    //this.fetchTasks();
+
+    const csrftoken = this.getCookie('csrftoken');
+
+    fetch(`http://127.0.0.1:8000/api/task-update/${task.id}/`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+        'X-CSRFToken': csrftoken,
+      },
+      body: JSON.stringify(task)
+    }).then((res) => {
+      this.fetchTasks();
+    });
+  }
 
   render(){
     const tasks = this.state.todoList;
@@ -155,8 +175,13 @@ class App extends React.Component{
           <div id="list-wrapper">
             {tasks.map( (task, index) => 
               <div key={index} className="task-wrapper flex-wrapper">
-                <div style = {{flex: 7}}>
-                  <span>{task.title}</span>
+                <div onClick={() => this.strikeUnstrike(task)} style = {{flex: 7}}>
+                  { task.completed !== true ? (
+                      <span>{task.title}</span>
+                  ) : ( 
+                    <strike>{task.title}</strike>
+                   )}
+                  
                 </div>
 
                 <div style = {{flex: 1}}>
