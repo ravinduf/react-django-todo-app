@@ -70,7 +70,7 @@ class App extends React.Component{
 
   handleSubmit(e) {
     e.preventDefault();
-    console.log(this.state.activeId);
+    
     
     const csrftoken = this.getCookie('csrftoken');
 
@@ -130,9 +130,9 @@ class App extends React.Component{
   }
 
   strikeUnstrike(task) {
-    console.log(task.completed);
+    
     task.completed = !task.completed;
-    console.log(task.completed);
+    
     //this.fetchTasks();
 
     const csrftoken = this.getCookie('csrftoken');
