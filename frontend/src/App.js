@@ -8,10 +8,11 @@ class App extends React.Component{
     this.state = {
       todoList:[],
       activeItem:{
-        id: null,
+        id: "",
         title: '',
         completed: false
       },
+      activeId: null,
       editing: false,
     }
 
@@ -19,6 +20,7 @@ class App extends React.Component{
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.getCookie = this.getCookie.bind(this);
+    this.startEdit = this.startEdit.bind(this);
   };
 
   getCookie(name) {
@@ -55,8 +57,6 @@ class App extends React.Component{
   handleChange(e) {
     const name = e.target.name;
     const value = e.target.value;
-    // console.log('Name', name);
-    // console.log('Value', value);
 
     this.setState({
       activeItem:{
@@ -64,15 +64,23 @@ class App extends React.Component{
       }
     })
 
+
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    console.log(this.state.activeItem);
-
+    console.log(this.state.activeId);
+    
     const csrftoken = this.getCookie('csrftoken');
 
-    const url = 'http://127.0.0.1:8000/api/task-create/';
+    let url = 'http://127.0.0.1:8000/api/task-create/';
+    console.log(this.state.activeItem.id)
+    if (this.state.editing == true ){
+      url = `http://127.0.0.1:8000/api/task-update/${ this.state.activeId }/`;
+      this.setState({
+        editing: false
+      })
+    }
 
     fetch(url, {
       method: 'POST',
@@ -82,16 +90,30 @@ class App extends React.Component{
       },
       body: JSON.stringify(this.state.activeItem)
     }).then((response) => {
+      console.log(response)
       this.fetchTasks();
       this.setState({
         activeItem : {
           title : ''
-        }
+        },
+        activeId: null,
+        editing: false
       })
   
     }).catch((error) => {
       console.log('Error: ', error)
     })
+  }
+
+  startEdit(task){
+    
+    this.setState({
+      activeItem: task,
+      activeId: task.id,
+      editing: true
+    })
+
+    
   }
 
   render(){
@@ -122,7 +144,7 @@ class App extends React.Component{
                 </div>
 
                 <div style = {{flex: 1}}>
-                  <button className="btn btn-sm btn-outline-info">Edit</button>
+                  <button onClick={() => this.startEdit(task)} className="btn btn-sm btn-outline-info">Edit</button>
                 </div>
 
                 <div style = {{flex: 1}}>
